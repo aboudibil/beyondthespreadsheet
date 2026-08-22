@@ -1,0 +1,26 @@
+{
+  "tools": [
+    {
+      "name": "CPAF v6",
+      "question": "What could a policy mix do — and why?",
+      "theory": "System dynamics · NPF · network theory · Monte Carlo",
+      "status": "live",
+      "tags": "Ex-ante, Multi-domain",
+      "contributor": "Bilel Abboudi",
+      "open": "/model/",
+      "download": "/downloads/cpaf-v6-model.zip",
+      "docs": "/docs/"
+    },
+    {
+      "name": "Monitoring & assessment",
+      "question": "Is a policy doing what it set out to?",
+      "theory": "Introduced in a forthcoming edition",
+      "status": "next",
+      "tags": "Monitor & assess",
+      "contributor": "",
+      "open": "",
+      "download": "",
+      "docs": ""
+    }
+  ]
+}

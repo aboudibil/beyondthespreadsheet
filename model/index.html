@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complexity-Based Policy Analysis Framework for Indian Handicrafts">
+<meta name="theme-color" content="#1e40af">
+<link rel="manifest" href="manifest.json">
+<title>CPAF v6 — Complexity-Based Policy Analysis Framework</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+  <div class="header-brand">
+    <h1><strong>CPAF v6</strong> — Complexity-Based Policy Analysis Framework</h1>
+    <div class="header-sub">Abboudi, B. (2026) • Jindal School of Government and Public Policy • 7-Dimensional Integration</div>
+  </div>
+  <div class="header-controls">
+    <select id="caseStudySelect" class="case-select" onchange="App.switchCaseStudy(this.value)">
+      <option value="chikankari">Chikankari (Lucknow)</option>
+      <option value="cheriyal">Cheriyal (Warangal)</option>
+    </select>
+    <div class="speed-control">
+      <label>Speed:</label>
+      <input type="range" id="speedSlider" min="50" max="500" value="200">
+    </div>
+    <div class="time-display">
+      <span>Month: <strong id="curMonth">0</strong></span>
+      <span>Year: <strong id="curYear">0</strong></span>
+    </div>
+    <button class="btn btn-run" id="btnRun" onclick="App.toggleSim()">▶ Run</button>
+    <button class="btn btn-reset" onclick="App.resetSim()">↺ Reset</button>
+    <button class="btn btn-admin" onclick="App.showAboutModal()" title="About this model — provenance, method, validation">ℹ️ About</button>
+    <button class="btn btn-admin" onclick="Admin.openPanel()">⚙️ Admin</button>
+  </div>
+</header>
+
+<!-- ========== SUMMARY BAR (NEW) ========== -->
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-item" id="summaryState">
+    <span class="summary-icon">⚠️</span>
+    <span class="summary-text">System in TRAP</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-icon">💰</span>
+    <span class="summary-text" id="summaryIncome">₹4,100/mo</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-icon">📋</span>
+    <span class="summary-text" id="summaryPolicies">0 policies active</span>
+  </div>
+  <div class="summary-item" id="summaryAlert" style="display:none">
+    <span class="summary-icon">🔴</span>
+    <span class="summary-text">Coordination failing</span>
+  </div>
+</div>
+
+<!-- ========== MAIN LAYOUT ========== -->
+<main class="main-grid">
+  
+  <!-- LEFT PANEL: Dimensions -->
+  <aside class="panel panel-dimensions">
+    <div class="panel-header">
+      <span class="panel-icon">📊</span>
+      <span class="panel-title">7 Dimensions</span>
+    </div>
+    <div class="panel-body" id="dimensionsPanel">
+      <!-- D1: Network/Coordination -->
+      <div class="dim-card" data-dim="D1" onclick="App.showDimModal('D1')">
+        <div class="dim-header">
+          <span class="dim-label">D1: Graph Theory</span>
+          <span class="dim-name">Coordination</span>
+        </div>
+        <div class="dim-value" id="D1val">0.30</div>
+        <div class="dim-bar"><div class="dim-bar-fill" id="D1bar" style="width:30%"></div></div>
+        <div class="dim-status" id="D1status">FRAGMENTED — Policy effectiveness ×0.51</div>
+      </div>
+      
+      <!-- D2: Attractor -->
+      <div class="dim-card" data-dim="D2" onclick="App.showDimModal('D2')">
+        <div class="dim-header">
+          <span class="dim-label">D2: Attractor</span>
+          <span class="dim-name">System State</span>
+        </div>
+        <div class="dim-value trap" id="D2val">TRAP</div>
+        <div class="dim-status" id="D2status">Income ₹4,100 < ₹8,000 threshold</div>
+      </div>
+      
+      <!-- D3: NPF -->
+      <div class="dim-card" data-dim="D3" onclick="App.showDimModal('D3')">
+        <div class="dim-header">
+          <span class="dim-label">D3: NPF</span>
+          <span class="dim-name">Political</span>
+        </div>
+        <div class="dim-value" id="D3val">0.50</div>
+        <div class="dim-bar"><div class="dim-bar-fill" id="D3bar" style="width:50%"></div></div>
+        <div class="dim-status" id="D3status">BALANCED — All policies feasible</div>
+        <!-- NPF Narrative Display (NEW) -->
+        <div class="npf-display" id="npfDisplay">
+          <div class="npf-narrative" id="npfNarrative">📖 Exploitation Narrative</div>
+          <div class="npf-characters">
+            <span class="npf-char hero" id="npfHero">🦸 Artisans</span>
+            <span class="npf-char villain" id="npfVillain">👹 Middlemen</span>
+            <span class="npf-char victim" id="npfVictim">🎭 Heritage</span>
+          </div>
+          <div class="npf-coalitions">
+            <div class="coalition-bar">
+              <div class="coalition-fill welfare" id="coalitionWelfare" style="width:55%"></div>
+              <span class="coalition-label" style="left:2px">Welfare 55%</span>
+            </div>
+            <div class="coalition-bar">
+              <div class="coalition-fill market" id="coalitionMarket" style="width:45%"></div>
+              <span class="coalition-label" style="right:2px">Market 45%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- D4: System Dynamics -->
+      <div class="dim-card" data-dim="D4" onclick="App.showDimModal('D4')">
+        <div class="dim-header">
+          <span class="dim-label">D4: System Dynamics</span>
+          <span class="dim-name">Feedback Loops</span>
+        </div>
+        <div class="dim-status" id="D4status">B1 (Trap) dominant — self-reinforcing decline</div>
+      </div>
+      
+      <!-- D5: Spatial -->
+      <div class="dim-card" data-dim="D5" onclick="App.showDimModal('D5')">
+        <div class="dim-header">
+          <span class="dim-label">D5: Spatial</span>
+          <span class="dim-name">Geography</span>
+        </div>
+        <div class="dim-value" id="D5val">0.70</div>
+        <div class="dim-bar"><div class="dim-bar-fill" id="D5bar" style="width:70%"></div></div>
+        <div class="dim-status" id="D5status">Urban ×1.0 | Peri ×0.7 | Rural ×0.4</div>
+      </div>
+      
+      <!-- D6: ABM -->
+      <div class="dim-card" data-dim="D6" onclick="App.showDimModal('D6')">
+        <div class="dim-header">
+          <span class="dim-label">D6: ABM</span>
+          <span class="dim-name">Segments</span>
+        </div>
+        <div class="dim-status" id="D6status">A:60% B:30% C:10%</div>
+        <div class="dim-value" id="D6gini">Gini: 0.45</div>
+      </div>
+      
+      <!-- D7: Monte Carlo -->
+      <div class="dim-card" data-dim="D7" onclick="App.showDimModal('D7')">
+        <div class="dim-header">
+          <span class="dim-label">D7: Monte Carlo</span>
+          <span class="dim-name">Uncertainty</span>
+        </div>
+        <div class="dim-status" id="D7status">±15% parameter bounds</div>
+      </div>
+      
+      <!-- Active Couplings -->
+      <div class="coupling-section">
+        <div class="coupling-title">🔗 Dimension Coupling Network</div>
+        <!-- Coupling Network SVG (NEW) -->
+        <div class="coupling-network">
+          <svg id="couplingNetworkSvg" viewBox="0 0 240 100">
+            <!-- Edges (drawn first, behind nodes) -->
+            <line class="coupling-edge" id="edge-D1-D4" x1="40" y1="30" x2="120" y2="50"/>
+            <line class="coupling-edge" id="edge-D2-D4" x1="200" y1="30" x2="120" y2="50"/>
+            <line class="coupling-edge" id="edge-D3-D4" x1="40" y1="70" x2="120" y2="50"/>
+            <line class="coupling-edge" id="edge-D5-D4" x1="200" y1="70" x2="120" y2="50"/>
+            <line class="coupling-edge" id="edge-D6-D4" x1="120" y1="90" x2="120" y2="50"/>
+            <line class="coupling-edge" id="edge-D1-D2" x1="40" y1="30" x2="200" y2="30"/>
+            <line class="coupling-edge" id="edge-D1-D3" x1="40" y1="30" x2="40" y2="70"/>
+            <line class="coupling-edge" id="edge-D2-D3" x1="200" y1="30" x2="40" y2="70"/>
+            <line class="coupling-edge" id="edge-D6-D1" x1="120" y1="90" x2="40" y2="30"/>
+            <line class="coupling-edge" id="edge-D6-D3" x1="120" y1="90" x2="40" y2="70"/>
+            <!-- Nodes -->
+            <circle class="coupling-node" cx="40" cy="30" r="12" fill="#dcfce7" stroke="#059669" stroke-width="2"/>
+            <text x="40" y="33" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">D1</text>
+            <circle class="coupling-node" cx="200" cy="30" r="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="200" y="33" text-anchor="middle" font-size="8" font-weight="bold" fill="#d97706">D2</text>
+            <circle class="coupling-node" cx="40" cy="70" r="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+            <text x="40" y="73" text-anchor="middle" font-size="8" font-weight="bold" fill="#7c3aed">D3</text>
+            <circle class="coupling-node" cx="120" cy="50" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+            <text x="120" y="53" text-anchor="middle" font-size="9" font-weight="bold" fill="#2563eb">D4</text>
+            <circle class="coupling-node" cx="200" cy="70" r="12" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+            <text x="200" y="73" text-anchor="middle" font-size="8" font-weight="bold" fill="#0891b2">D5</text>
+            <circle class="coupling-node" cx="120" cy="90" r="12" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+            <text x="120" y="93" text-anchor="middle" font-size="8" font-weight="bold" fill="#db2777">D6</text>
+          </svg>
+        </div>
+        <!-- Coupling Badges -->
+        <div class="coupling-grid" id="couplingsGrid">
+          <div class="coupling-badge" data-c="D1-D4" onclick="App.showCouplingModal('D1-D4')">D1↔D4<span class="coupling-desc">Coord</span></div>
+          <div class="coupling-badge" data-c="D2-D4" onclick="App.showCouplingModal('D2-D4')">D2↔D4<span class="coupling-desc">State</span></div>
+          <div class="coupling-badge" data-c="D3-D4" onclick="App.showCouplingModal('D3-D4')">D3↔D4<span class="coupling-desc">Policy</span></div>
+          <div class="coupling-badge" data-c="D5-D4" onclick="App.showCouplingModal('D5-D4')">D5→D4<span class="coupling-desc">Space</span></div>
+          <div class="coupling-badge" data-c="D6-D4" onclick="App.showCouplingModal('D6-D4')">D6↔D4<span class="coupling-desc">Agents</span></div>
+          <div class="coupling-badge" data-c="D6-D1" onclick="App.showCouplingModal('D6-D1')">D6↔D1<span class="coupling-desc">Network</span></div>
+          <div class="coupling-badge" data-c="D6-D3" onclick="App.showCouplingModal('D6-D3')">D6↔D3<span class="coupling-desc">Ineq.</span></div>
+          <div class="coupling-badge" data-c="D1-D3" onclick="App.showCouplingModal('D1-D3')">D1↔D3<span class="coupling-desc">Voice</span></div>
+          <div class="coupling-badge" data-c="D1-D2" onclick="App.showCouplingModal('D1-D2')">D1↔D2<span class="coupling-desc">Resil.</span></div>
+          <div class="coupling-badge" data-c="D2-D3" onclick="App.showCouplingModal('D2-D3')">D2↔D3<span class="coupling-desc">Crisis</span></div>
+          <div class="coupling-badge" data-c="D4-B1" onclick="App.showCouplingModal('D4-B1')">D4:B1<span class="coupling-desc">Exploit</span></div>
+          <div class="coupling-badge" data-c="D4-B3" onclick="App.showCouplingModal('D4-B3')">D4:B3<span class="coupling-desc">Heritage</span></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- CENTER PANEL: CLD & Charts -->
+  <section class="panel panel-center">
+    <div class="panel-header">
+      <span class="panel-icon">⚙️</span>
+      <span class="panel-title">Causal Loop Diagram (D4) — Click elements for detail</span>
+    </div>
+    <div class="panel-body">
+      <!-- CLD Legend -->
+      <div class="cld-legend">
+        <div class="legend-item"><div class="leg-stock"></div>Stock</div>
+        <div class="legend-item"><div class="leg-aux"></div>Auxiliary</div>
+        <div class="legend-item"><div class="leg-dim"></div>Dimension</div>
+        <div class="legend-item"><div class="leg-pol"></div>Policy</div>
+        <div class="legend-item"><span class="leg-r">R</span>Reinforcing</div>
+        <div class="legend-item"><span class="leg-b">B</span>Balancing</div>
+        <div class="legend-item"><span style="display:inline-block;width:14px;border-top:1.5px dashed #94a3b8;margin-right:4px;vertical-align:middle"></span>Secondary</div>
+      </div>
+      
+      <!-- CLD Container -->
+      <div class="cld-container">
+        <div class="tipping-alert" id="tippingAlert">⚠️ TIPPING POINT APPROACHING</div>
+        <svg id="cldSvg" viewBox="0 0 1000 480"></svg>
+      </div>
+
+      <!-- Loops & academic references (populated from Config.LOOPS) -->
+      <details class="loop-legend-panel" style="margin-top:8px;font-size:12px">
+        <summary style="cursor:pointer;font-weight:600;color:#475569">📖 Loops &amp; references — what each code means</summary>
+        <div id="loopLegendBody" style="margin-top:6px"></div>
+      </details>
+
+      <!-- Policy -> Node matrix (populated from Config.POLICIES) -->
+      <details class="loop-legend-panel" style="margin-top:8px;font-size:12px">
+        <summary style="cursor:pointer;font-weight:600;color:#475569">📋 Policy → Node matrix — which policy affects which node</summary>
+        <div id="policyMatrixBody" style="margin-top:6px;overflow-x:auto"></div>
+      </details>
+      
+      <!-- Segments Display -->
+      <div class="segments-container">
+        <div class="chart-title">👥 Segment Outcomes (D6)</div>
+        <div class="seg-row">
+          <span class="seg-label">A: Subsistence</span>
+          <div class="seg-bar"><div class="seg-bar-fill seg-a" id="segAbar" style="width:60%"></div><span class="seg-pct" id="segApct">60%</span></div>
+          <span class="seg-inc" id="segAinc">₹3,500</span>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">B: Traditional</span>
+          <div class="seg-bar"><div class="seg-bar-fill seg-b" id="segBbar" style="width:30%"></div><span class="seg-pct" id="segBpct">30%</span></div>
+          <span class="seg-inc" id="segBinc">₹5,200</span>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">C: Market-Ready</span>
+          <div class="seg-bar"><div class="seg-bar-fill seg-c" id="segCbar" style="width:10%"></div><span class="seg-pct" id="segCpct">10%</span></div>
+          <span class="seg-inc" id="segCinc">₹9,800</span>
+        </div>
+      </div>
+      
+      <!-- Charts Grid (4 Charts) -->
+      <div class="charts-grid four-charts">
+        <div class="chart-box">
+          <div class="chart-title">📈 Income Trajectory</div>
+          <div class="chart-container"><canvas id="chartIncome"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">🔄 Coordination, Political &amp; Skills</div>
+          <div class="chart-container"><canvas id="chartDimensions"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">👥 Population & Gini</div>
+          <div class="chart-container"><canvas id="chartPopGini"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">🏭 Middlemen & Market</div>
+          <div class="chart-container"><canvas id="chartMiddlemen"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">🏛️ Heritage Capital</div>
+          <div class="chart-container"><canvas id="chartHeritage"></canvas></div>
+        </div>
+        <div class="chart-box" title="Reporting overlay — the male/female split of income via the wage gap. A downstream readout only; it does not feed back into any stock and is not a model driver.">
+          <div class="chart-title">⚖️ Income by Gender <span style="font-weight:400;opacity:0.65">· reporting</span></div>
+          <div class="chart-container"><canvas id="chartGender"></canvas></div>
+        </div>
+        <div class="chart-box" style="grid-column:1 / -1">
+          <div class="chart-title">🗺️ Spatial Reach (D5)</div>
+          <div class="chart-container"><canvas id="chartSpatial"></canvas></div>
+        </div>
+      </div>
+      
+      <!-- 3D Attractor Visualization (NEW) -->
+      <div class="attractor-section">
+        <div class="chart-title">
+          🌀 3D Attractor Dynamics (D2)
+          <span class="attractor-controls">
+            <button class="btn-small active" id="btn3dTrajectory" onclick="set3DMode('trajectory')">Trajectory</button>
+            <button class="btn-small" id="btn3dLandscape" onclick="set3DMode('landscape')">Resilience</button>
+            <button class="btn-small" id="btn3dBifurcation" onclick="App.showBifurcationExplainer()" title="Explains how the basins reshape — an explainer panel, not a 3D mode">Bifurcation ▸</button>
+            <button class="btn-small" onclick="Attractor3D.resetView()">Reset</button>
+            <button class="btn-small" onclick="Attractor3D.toggleRotate()">Rotate</button>
+          </span>
+        </div>
+        <div id="attractor3D" class="attractor-container"></div>
+        <div class="attractor-legend">
+          <span class="leg-trap" id="legTrap">■ TRAP (₹&lt;2.8k)</span>
+          <span class="leg-trans">■ TRANSITION</span>
+          <span class="leg-growth" id="legGrowth">■ GROWTH (₹&gt;4.5k)</span>
+        </div>
+        <div id="bifExplainerPanel" style="display:none;margin-top:10px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px">
+          <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">🔀 Bifurcation &amp; bistability — how the basins reshape</div>
+          <div id="bifExplainerBody"></div>
+        </div>
+      </div>
+      
+      <!-- Monte Carlo & ABM Section (NEW) -->
+      <div class="mc-abm-section">
+        <div class="mc-abm-grid">
+          <!-- Monte Carlo -->
+          <div class="mc-box">
+            <div class="chart-title">
+              🎲 Monte Carlo (D7)
+              <button class="btn-small btn-mc" onclick="App.runMonteCarlo()">Run MC</button>
+            </div>
+            <div class="chart-container mc-chart"><canvas id="chartMC"></canvas></div>
+            <div class="mc-stats" id="mcStats">Click "Run MC" to simulate uncertainty</div>
+          </div>
+          <!-- ABM Scatter -->
+          <div class="abm-box">
+            <div class="chart-title">👥 ABM Segments (D6)</div>
+            <div class="chart-container abm-chart"><canvas id="chartABM"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy Interaction Analysis (structural backbone) -->
+      <div class="mc-abm-section">
+        <div id="policyAnalysisPanel"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- RIGHT PANEL: Policies & Outcomes -->
+  <aside class="panel panel-policies">
+    <div class="panel-header">
+      <span class="panel-icon">🎯</span>
+      <span class="panel-title">Policies & Outcomes</span>
+    </div>
+    <div class="panel-body">
+      <!-- Scenario Buttons -->
+      <div class="scenario-buttons">
+        <button class="btn-scenario" onclick="App.loadScenario('none', event)">No Policy</button>
+        <button class="btn-scenario" onclick="App.loadScenario('market', event)">Market</button>
+        <button class="btn-scenario" onclick="App.loadScenario('welfare', event)">Welfare</button>
+        <button class="btn-scenario" onclick="App.loadScenario('integrated', event)">Integrated</button>
+      </div>
+      
+      <!-- Decision Insights Panel -->
+      <div class="decision-insights-panel" id="decisionInsightsPanel">
+        <div class="insights-header">📊 Decision Insights</div>
+        <div class="insights-grid">
+          <div class="insight-item" id="insightThreshold">
+            <span class="insight-icon">🎯</span>
+            <span class="insight-text">₹10,900 to GROWTH</span>
+          </div>
+          <div class="insight-item" id="insightMC" style="display: none;">
+            <span class="insight-icon">🎲</span>
+            <span class="insight-text">Escape: --</span>
+          </div>
+        </div>
+        <div class="synergy-list" id="synergyList"></div>
+      </div>
+      
+      <!-- Active Shocks Indicator -->
+      <div class="active-shocks-panel" id="activeShocksPanel" style="display: none;">
+        <div class="shock-indicator">
+          <span class="shock-icon">⚡</span>
+          <span class="shock-label">Active Shocks:</span>
+        </div>
+        <div class="shock-list" id="activeShocksList"></div>
+      </div>
+      
+      <!-- Policies List -->
+      <div style="margin:6px 0 10px;font-size:11px;color:#475569">
+        <div style="opacity:0.7;margin-bottom:3px">Policy gating (off = unbounded):</div>
+        <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;margin-right:14px" title="ON: structural/cluster policies need coordination ≥ 0.20 before they can be activated. OFF (default): no coordination requirement.">
+          <input type="checkbox" id="coordGatingToggle" onchange="Simulation.setCoordinationGating(this.checked); App.updatePolicyFeasibility();">
+          <span>Coordination gate</span>
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer" title="ON (default): coalition feasibility applies (welfare blocked when political<0.30, market blocked when political>0.70). OFF: any policy activatable regardless of the coalition — pure testing.">
+          <input type="checkbox" id="polGatingToggle" checked onchange="Simulation.setPoliticalGating(this.checked); App.updatePolicyFeasibility();">
+          <span>Political gate</span>
+        </label>
+      </div>
+      <div id="policiesList"></div>
+      
+      <!-- Outcome Cards -->
+      <div class="outcomes-grid">
+        <div class="outcome-card">
+          <div class="outcome-label">System State</div>
+          <div class="outcome-value trap" id="outState">TRAP</div>
+          <div class="outcome-sub" id="outStateDesc">Self-reinforcing decline</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label">Avg Income</div>
+          <div class="outcome-value" id="outIncome">₹4,100</div>
+          <div class="outcome-sub">Per month</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label">Inequality</div>
+          <div class="outcome-value" id="outGini">0.45</div>
+          <div class="outcome-sub">Gini coefficient</div>
+        </div>
+        <div class="outcome-card" title="Cost-effectiveness: income gained above subsistence per 100 crore of active-policy budget. Because of the AND-gate, the same spend returns very differently by context (complementarity) — coordinated bundles dominate scattered spend.">
+          <div class="outcome-label">Policy Efficiency</div>
+          <div class="outcome-value" id="outEfficiency">—</div>
+          <div class="outcome-sub">₹/mo gained · 100 cr spent</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label">Policy Reach</div>
+          <div class="outcome-value" id="outReach">51%</div>
+          <div class="outcome-sub">Artisans covered</div>
+        </div>
+      </div>
+      
+      <!-- Complexity Indicators -->
+      <div class="complexity-panel" id="complexityPanel">
+        <div class="complexity-header">🧬 Complexity Diagnostics
+          <span class="cx-help" title="These indicators show how complexity mechanisms modify the core simulation. They represent endogenous forces that emerge from system state — not external parameters.">ⓘ</span>
+          <span class="cx-refs-btn" onclick="App.showComplexityRefsModal()" title="View academic references for all complexity mechanisms">📚</span>
+        </div>
+        <div class="complexity-grid">
+          <div class="cx-item" title="R1 Activation: What fraction of skill premium actually reaches artisans. Low values mean middlemen capture the premium, incomes are below subsistence, or skills are too low to differentiate. Reference: Conditional loop activation (Sterman 2000).">
+            <span class="cx-label">R1 (Skill→₹)</span>
+            <div class="cx-bar-track"><div class="cx-bar r1" id="cxR1bar" style="width:100%"></div></div>
+            <span class="cx-val" id="cxR1val">100%</span>
+            <div class="cx-interpret" id="cxR1interpret"></div>
+          </div>
+          <div class="cx-item" title="R2 Activation: What fraction of market access translates to revenue. Suppressed by low market access (<0.3), poor digital infrastructure, or demand saturation at higher income levels. Reference: Market access conditionality.">
+            <span class="cx-label">R2 (Market→₹)</span>
+            <div class="cx-bar-track"><div class="cx-bar r2" id="cxR2bar" style="width:100%"></div></div>
+            <span class="cx-val" id="cxR2val">100%</span>
+            <div class="cx-interpret" id="cxR2interpret"></div>
+          </div>
+          <div class="cx-item" title="Credit Lock-in: Proportion of artisans dependent on middlemen for working capital. High dependency enables exploitative pricing (putting-out system). Reduced by direct credit policies (PM Vishwakarma, SHGs). Reference: AIACA (2019).">
+            <span class="cx-label">Credit Lock-in</span>
+            <div class="cx-bar-track"><div class="cx-bar credit" id="cxCreditbar" style="width:0%"></div></div>
+            <span class="cx-val" id="cxCreditval">0%</span>
+            <div class="cx-interpret" id="cxCreditinterpret"></div>
+          </div>
+          <div class="cx-item" title="Competition Factor: Income multiplier from population density effects. At ×1.00, no crowding. Below ×1.00, too many artisans compete for limited market demand, suppressing per-capita income. Reference: Carrying capacity models.">
+            <span class="cx-label">Competition</span>
+            <div class="cx-bar-track"><div class="cx-bar comp" id="cxCompbar" style="width:100%"></div></div>
+            <span class="cx-val" id="cxCompval">×1.00</span>
+            <div class="cx-interpret" id="cxCompinterpret"></div>
+          </div>
+          <div class="cx-item" title="Network Density: Number of active inter-dimensional couplings. Higher density means the system is more tightly coupled — feedback loops interact across dimensions. Very high density can increase fragility (Perrow 1984).">
+            <span class="cx-label">Net Density</span>
+            <span class="cx-val" id="cxNetval">0</span>
+            <div class="cx-interpret" id="cxNetinterpret"></div>
+          </div>
+          <div class="cx-item" title="Cumulative Departures: the running count of artisans who have left the craft over the whole run. Because it counts ongoing turnover (people leave, new people enter, some of them leave too), it can exceed the starting workforce — it is a count, not a share of a fixed group. Driven by income below subsistence, loss of skills transmission, or better outside options. Reference: brain-drain models.">
+            <span class="cx-label">Cumulative Departures</span>
+            <span class="cx-val" id="cxExitsval">0</span>
+            <div class="cx-interpret" id="cxExitsinterpret"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Event Log -->
+      <div class="log-section">
+        <div class="log-header">
+          <span>📝 Event Log</span>
+          <button class="btn-small" onclick="Export.exportEventLog()">📥</button>
+        </div>
+        <div class="log-filters">
+          <button class="log-filter active" data-type="ALL" onclick="App.filterLog('ALL')">All</button>
+          <button class="log-filter" data-type="STATE" onclick="App.filterLog('STATE')">State</button>
+          <button class="log-filter" data-type="POLICY" onclick="App.filterLog('POLICY')">Policy</button>
+          <button class="log-filter" data-type="COMPLEXITY" onclick="App.filterLog('COMPLEXITY')">Complexity</button>
+          <button class="log-filter" data-type="COUPLING" onclick="App.filterLog('COUPLING')">Coupling</button>
+          <button class="log-filter" data-type="SHOCK" onclick="App.filterLog('SHOCK')">Shock</button>
+          <button class="log-filter" data-type="NPF" onclick="App.filterLog('NPF')">NPF</button>
+          <button class="log-filter" data-type="MONTE" onclick="App.filterLog('MONTE')">MC</button>
+          <button class="log-filter" data-type="SIM" onclick="App.filterLog('SIM')">Sim</button>
+        </div>
+        <div class="log-container" id="eventLog">
+          <div class="log-entry"><span class="log-time">[t=0]</span> <span class="log-info">Ready. Click Run to start.</span></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ========== ADMIN PANEL (Modal) ========== -->
+<div class="modal-overlay" id="adminPanel">
+  <div class="admin-modal">
+    <div class="admin-header">
+      <h2>⚙️ CPAF Admin Panel</h2>
+      <button class="modal-close" onclick="Admin.closePanel()">×</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="policies" onclick="Admin.switchTab('policies')">📋 Policies</button>
+      <button class="admin-tab" data-tab="cases" onclick="Admin.switchTab('cases')">🗺️ Case Studies</button>
+      <button class="admin-tab" data-tab="data" onclick="Admin.switchTab('data')">📊 Data</button>
+      <button class="admin-tab" data-tab="calibration" onclick="Admin.switchTab('calibration')">🔧 Calibration</button>
+      <button class="admin-tab" data-tab="complexity" onclick="Admin.switchTab('complexity')">🧬 Complexity</button>
+      <button class="admin-tab" data-tab="export" onclick="Admin.switchTab('export')">📤 Export</button>
+    </div>
+    <div class="admin-content" id="adminContent">
+      <!-- Content loaded dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ========== DETAIL MODAL ========== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="detail-modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span id="modalIcon">📊</span>
+        <span id="modalTitle">Element</span>
+      </div>
+      <span class="modal-type" id="modalType">Type</span>
+      <button class="modal-close" onclick="App.closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ========== SCRIPTS ========== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/export.js"></script>
+<script src="js/policy_explorer.js"></script>
+<script src="js/policy_explorer_ui.js"></script>
+<script defer src="js/pe_bundle.js"></script>
+<script src="js/attractor3d.js"></script>
+<script src="js/app.js"></script>
+<script src="js/model_validation.js"></script>
+<script src="js/tests.js"></script>
+<script>
+  // Initialize app when DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    App.init();
+  });
+  
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed:', err));
+  }
+</script>
+</body>
+</html>

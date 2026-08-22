@@ -1,0 +1,4 @@
+[build]
+  publish = "."
+
+# Clean URLs and a tidy 404 can be added later.
