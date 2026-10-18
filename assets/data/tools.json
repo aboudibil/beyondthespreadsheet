@@ -12,6 +12,17 @@
       "docs": "/docs/"
     },
     {
+      "name": "Before You Sign",
+      "question": "Should we buy this advice, and will we be stronger afterwards?",
+      "theory": "Absorptive capacity · policy capacity · public value",
+      "status": "live",
+      "tags": "Practice, Managers",
+      "contributor": "Bilel Abboudi",
+      "open": "/before-you-sign.html",
+      "download": "/downloads/before-you-sign-templates.pdf",
+      "docs": "/downloads/consultocracy-seven-lenses-analysis.pdf"
+    },
+    {
       "name": "Monitoring & assessment",
       "question": "Is a policy doing what it set out to?",
       "theory": "Introduced in a forthcoming edition",
