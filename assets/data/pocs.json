@@ -1,3 +1,15 @@
 {
-  "pocs": []
+  "pocs": [
+    {
+      "name": "State Analytical Capacity and Consultocracy",
+      "question": "How does a state lose, and rebuild, its capacity to think?",
+      "domain": "Public administration",
+      "pattern": "Trap · hysteresis",
+      "approach": "Seven lenses on one situation; routes out ranked by leverage depth",
+      "theory": "Absorptive capacity · policy capacity · public value",
+      "document": "/downloads/consultocracy-seven-lenses-analysis.pdf",
+      "download": "/downloads/consultocracy-seven-lenses-analysis.pdf",
+      "published": true
+    }
+  ]
 }
