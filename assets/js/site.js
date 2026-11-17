@@ -54,7 +54,7 @@ async function loadPocs(){
     const d=await r.json(); const list=(d.pocs||[]).filter(p=>p.published!==false);
     if(!list.length) return;
     const suggest=`<div class="card dashed"><div class="tags"><span class="tag">Open</span><span class="status st-open">Open</span></div>
-      <h3>Your problem here?</h3><div class="sub">Suggest a public problem you'd like to see modelled.</div>
+      <h3>Your policy here?</h3><div class="sub">Suggest a public policy you'd like to see explored.</div>
       <div class="cardcta"><a class="mini" href="#suggest">Suggest &#8594;</a></div></div>`;
     grid.innerHTML=list.map(pocCard).join('')+suggest;
   }catch(e){}

@@ -64,9 +64,9 @@ section{padding:60px 0;border-bottom:1px solid var(--hair)}
 .plabel{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
 .field{margin:16px 0;max-width:560px}
 .field label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
-.field input,.field textarea{width:100%;background:#0c1512;border:1px solid var(--hair);border-radius:8px;padding:12px 14px;color:var(--cream);font-family:var(--serif);font-size:16px}
+.field input,.field textarea,.field select{width:100%;background:#0c1512;border:1px solid var(--hair);border-radius:8px;padding:12px 14px;color:var(--cream);font-family:var(--serif);font-size:16px}
 .field textarea{min-height:90px;resize:vertical}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold)}
 .bc{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
 .note{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin:14px 0 0}
 footer{padding:52px 0 60px;background:var(--bg2)}
