@@ -36,3 +36,25 @@ collections:
         fields:
           - {label: "LinkedIn newsletter URL (Subscribe button)", name: "newsletter", widget: "string", required: false}
           - {label: "Contribute form endpoint (Formspree)", name: "contribute", widget: "string", required: false}
+  - name: "pocs"
+    label: "Proofs of concept (gallery)"
+    files:
+      - name: "pocs"
+        label: "Proof-of-concept list"
+        file: "assets/data/pocs.json"
+        fields:
+          - label: "Proofs of concept"
+            name: "pocs"
+            widget: "list"
+            summary: "{{fields.name}}"
+            fields:
+              - {label: "Name", name: "name", widget: "string"}
+              - {label: "The policy question it explores", name: "question", widget: "string"}
+              - {label: "Policy domain", name: "domain", widget: "string", required: false}
+              - {label: "Pattern (e.g. trap, AND-gate, sequencing)", name: "pattern", widget: "string", required: false}
+              - {label: "Theory (named, published)", name: "theory", widget: "string", required: false}
+              - {label: "Honest limits (one line)", name: "limits", widget: "string", required: false}
+              - {label: "Open URL", name: "open", widget: "string", required: false}
+              - {label: "Download URL", name: "download", widget: "string", required: false}
+              - {label: "Docs URL", name: "docs", widget: "string", required: false}
+              - {label: "Show on site", name: "published", widget: "boolean", default: false}
