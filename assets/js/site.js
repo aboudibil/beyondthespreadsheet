@@ -39,13 +39,12 @@ loadSettings(); loadTools();
 function pocCard(p){
   const tags=[p.domain,p.pattern].filter(Boolean).map(x=>`<span class="tag">${x}</span>`).join('');
   let cta='';
-  if(p.open) cta+=`<a class="mini g" href="${p.open}" target="_blank" rel="noopener">Open</a>`;
+  if(p.document) cta+=`<a class="mini g" href="${p.document}" target="_blank" rel="noopener">Read</a>`;
   if(p.download) cta+=`<a class="mini d" href="${p.download}" download>&#8595; Download</a>`;
-  if(p.docs) cta+=`<a class="mini" href="${p.docs}">Docs</a>`;
   const row=(k,v)=>v?`<div class="row"><span class="rk">${k}</span><span class="rv">${v}</span></div>`:'';
-  return `<div class="card"><div class="tags">${tags}<span class="status st-live">Live</span></div>
+  return `<div class="card"><div class="tags">${tags}<span class="status st-live">Published</span></div>
     <h3>${p.name||''}</h3><div class="sub">${p.question||''}</div>
-    <div class="kv">${row('Theory',p.theory)}${row('Limits',p.limits)}</div>
+    <div class="kv">${row('Approach',p.approach)}${row('Theory',p.theory)}</div>
     <div class="cardcta">${cta}</div></div>`;
 }
 async function loadPocs(){

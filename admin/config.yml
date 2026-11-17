@@ -52,9 +52,8 @@ collections:
               - {label: "The policy question it explores", name: "question", widget: "string"}
               - {label: "Policy domain", name: "domain", widget: "string", required: false}
               - {label: "Pattern (e.g. trap, AND-gate, sequencing)", name: "pattern", widget: "string", required: false}
+              - {label: "Approach (one line)", name: "approach", widget: "string", required: false}
               - {label: "Theory (named, published)", name: "theory", widget: "string", required: false}
-              - {label: "Honest limits (one line)", name: "limits", widget: "string", required: false}
-              - {label: "Open URL", name: "open", widget: "string", required: false}
+              - {label: "PoC document URL (to read online)", name: "document", widget: "string", required: false}
               - {label: "Download URL", name: "download", widget: "string", required: false}
-              - {label: "Docs URL", name: "docs", widget: "string", required: false}
               - {label: "Show on site", name: "published", widget: "boolean", default: false}
